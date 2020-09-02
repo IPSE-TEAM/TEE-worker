@@ -1,0 +1,99 @@
+name: "substraTEE-worker"
+version: "0.6.0"
+about: Worker using Intel SGX TEE for SubstraTEE-node
+authors: "Supercomputing Systems AG <info@scs.ch>"
+
+# AppSettings can be defined as a list and are **not** ascii case sensitive
+settings:
+    - ColoredHelp
+    - SubcommandRequired
+
+# All subcommands must be listed in the 'subcommand:' object, where the key to
+# the list is the name of the subcommand, and all settings for that command are
+# are part of a Hash
+args:
+    - node-server:
+        long: ns
+        help: Set the node server protocol and IP address
+        takes_value: true
+        default_value: "ws://127.0.0.1"
+    - node-port:
+        short: p
+        long: node-port
+        help: Set the websocket port to listen for substrate events
+        takes_value: true
+        default_value: "9944"
+    - w-server:
+        long: ws
+        help: Set the worker's IP address
+        takes_value: true
+        default_value: "127.0.0.1"
+    - w-port:
+        short: w
+        long: worker-port
+        help: Set the websocket port to listen for worker requests
+        takes_value: true
+        default_value: "2000"
+    - mu-ra-port:
+        short: r
+        long: mu-ra-port
+        help: Set the websocket port to listen for mu-ra requests
+        takes_value: true
+        default_value: "3443"
+
+subcommands:
+    - run:
+        about: Start the substraTEE-worker
+        args:
+            - shard:
+                required: false
+                index: 1
+                help: shard identifier base58 encoded. Defines the state that this worker shall operate on. Default is mrenclave
+    - shielding-key:
+        about: Get the public RSA3072 key from the TEE to be used to encrypt requests
+    - signing-key:
+        about: Get the public ed25519 key the TEE uses to sign messages and extrinsics
+    - dump-ra:
+        about: Perform RA and dump cert to disk
+    - mrenclave:
+        about: Dump mrenclave to stdout. base58 encoded.
+    - init-shard:
+        about: Initialize new shard (do this only if you run the first worker for that shard). if shard is not specified, the MRENCLAVE is used instead
+        args:
+            - shard:
+                required: false
+                multiple: true
+                index: 1
+                help: shard identifier base58 encoded
+    - test:
+          about: Run tests involving the enclave
+          takes_value: true
+          args:
+                - all:
+                    short: a
+                    long: all
+                    help: Run all tests (beware, all corrupts the counter state for some whatever reason...)
+                    takes_value: false
+                - unit:
+                    short: u
+                    long: unit
+                    help: Run unit tests
+                    takes_value: false
+                - ecall:
+                    short: e
+                    long: ecall
+                    help: Run enclave ecall tests
+                    takes_value: false
+                - integration:
+                    short: i
+                    long: integration
+                    help: Run integration tests
+                    takes_value: false
+                - provisioning-server:
+                    long: provisioning-server
+                    help: Run TEE server for MU-RA key provisioning
+                    takes_value: false
+                - provisioning-client:
+                    long: provisioning-client
+                    help: Run TEE client for MU-RA key provisioning
+                    takes_value: false

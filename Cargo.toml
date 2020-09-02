@@ -1,0 +1,9 @@
+[workspace]
+members = [
+	 "worker",
+	 "worker/worker-api",
+	 "substratee-node-primitives",
+	 "client",
+	 "stf",
+#	 "enclave",
+]
